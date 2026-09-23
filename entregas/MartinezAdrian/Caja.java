@@ -52,8 +52,5 @@ public class Caja {
         return personasAtendidas;
     }
 
-    public boolean puedeAtender(Cliente cliente){
-        return true;
-    }
 
 }

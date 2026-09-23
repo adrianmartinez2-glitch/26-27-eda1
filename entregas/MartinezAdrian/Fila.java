@@ -1,26 +1,27 @@
 public class Fila {
 
-    private Cliente[] clientes;
-    private final int CAPACIDAD_MAXIMA = 100;
-    private int minutosSinClientes;
+    private Cliente primero;
+    private Cliente ultimo;
     private int tamaño;
     private Console console;
 
     public Fila() {
-        clientes = new Cliente[CAPACIDAD_MAXIMA];
-        minutosSinClientes = 0;
+        primero = null;
+        ultimo = null;
         tamaño = 0;
         console = new Console();
     }
 
-    public void registrarEstado() {
-        if (tamaño == 0) {
-            minutosSinClientes = minutosSinClientes + 1;
-        }
-    }
 
     public void añadirCliente(Cliente cliente) {
-        clientes[tamaño] = cliente;
+        cliente.establecerSiguiente(null);
+        cliente.establecerAnterior(ultimo);
+        if (ultimo == null) {
+            primero = cliente;
+        } else {
+            ultimo.establecerSiguiente(cliente);
+        }
+        ultimo = cliente;
         tamaño = tamaño + 1;
     }
 
@@ -29,32 +30,32 @@ public class Fila {
     }
 
     public Cliente quitarCliente() {
-        Cliente cliente = clientes[0];
-        for (int i = 0; i < tamaño - 1; i++) {
-            clientes[i] = clientes[i + 1];
+        Cliente cliente = primero;
+        primero = cliente.obtenerSiguiente();
+        if (primero == null) {
+            ultimo = null;
+        } else {
+            primero.establecerAnterior(null);
         }
-        clientes[tamaño - 1] = null;
+        cliente.establecerAnterior(null);
+        cliente.establecerSiguiente(null);
         tamaño = tamaño - 1;
         return cliente;
     }
 
     public void mostrar() {
-        for(int i=0;i<tamaño;i++){
-            clientes[i].mostrar();
+        Cliente clienteActual = primero;
+        while (clienteActual != null) {
+            clienteActual.mostrar();
+            clienteActual = clienteActual.obtenerSiguiente();
         }
         console.writeln();
     }
 
-    public int obtenerMinutosSinClientes() {
-        return minutosSinClientes;
-    }
 
     public int obtenerCantidadPersonasEnFila() {
         return tamaño;
     }
 
-    public Cliente primero() {
-        return clientes[0];
-    }
 
 }

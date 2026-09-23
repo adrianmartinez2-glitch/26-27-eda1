@@ -1,31 +1,32 @@
 public class CentroComercial {
     private Fila fila;
     private Tiempo tiempo;
-    private Caja[] cajas;
+    private Caja caja1;
+    private Caja caja2;
+    private Caja caja3;
+    private Caja caja4;
     private Console console;
 
     private boolean haLlegadoCliente;
     
     private final double PROB_LLEG_CLIENT = 0.6;
     private final double PROB_CAJA_ABIERTA = 0.4;
-    private final int NUM_CAJAS = 4;
 
 
     public CentroComercial() {
         fila = new Fila();
         tiempo = new Tiempo();
-        cajas = new Caja[NUM_CAJAS];
+        caja1 = new Caja(1);
+        caja2 = new Caja(2);
+        caja3 = new Caja(3);
+        caja4 = new Caja(4);
         console = new Console();
-        for (int i = 0; i < NUM_CAJAS; i++) {
-            cajas[i] = new Caja(i + 1);
-        }
     }
 
     public void execute() {
         do {
             tiempo.avanzar();
             this.procesarLlegadaCliente();
-            fila.registrarEstado();
             this.abrirCaja();
             this.asignarClientesACajas();
             this.mostrarEstado();
@@ -36,10 +37,10 @@ public class CentroComercial {
     }
 
     private void mostrarResumen() {
-        int personasAtendidas = 0;
-        for (Caja caja : cajas) {
-            personasAtendidas += caja.obtenerPersonasAtendidas();
-        }
+        int personasAtendidas = caja1.obtenerPersonasAtendidas()
+            + caja2.obtenerPersonasAtendidas()
+            + caja3.obtenerPersonasAtendidas()
+            + caja4.obtenerPersonasAtendidas();
         console.writeln("\nResumen final");
         console.writeln("Personas atendidas: " + personasAtendidas);
         console.writeln("Personas en fila: " + fila.obtenerCantidadPersonasEnFila());
@@ -54,40 +55,47 @@ public class CentroComercial {
         tiempo.mostrar(haLlegadoCliente);
         console.writeln("Fila (" + fila.obtenerCantidadPersonasEnFila() + "): ");
         fila.mostrar();
-        for (Caja caja : cajas) {
-            caja.mostrar();
-        }
+        caja1.mostrar();
+        caja2.mostrar();
+        caja3.mostrar();
+        caja4.mostrar();
     }
 
     private void abrirCaja() {
         if (Math.random() <= PROB_CAJA_ABIERTA) {
-            for (Caja caja : cajas) {
-                if (!caja.estaAbierta()) {
-                    caja.abrir();
-                    return;
-                }
+            if (!caja1.estaAbierta()) {
+                caja1.abrir();
+            } else if (!caja2.estaAbierta()) {
+                caja2.abrir();
+            } else if (!caja3.estaAbierta()) {
+                caja3.abrir();
+            } else if (!caja4.estaAbierta()) {
+                caja4.abrir();
             }
         }
     }
 
     private void procesarAtencionCajas() {
-        for (Caja caja : cajas) {
-            caja.avanzarAtencion();
-        }
+        caja1.avanzarAtencion();
+        caja2.avanzarAtencion();
+        caja3.avanzarAtencion();
+        caja4.avanzarAtencion();
     }
 
     private void asignarClientesACajas() {
-        if (!fila.hayClientes()) {
-            return;
-        }
-        for (Caja caja : cajas) {
-            if (caja.estaLibre() && caja.puedeAtender(fila.primero())) {
-                Cliente cliente = fila.quitarCliente();
-                caja.asignar(cliente);
-                return;
-            }
-        }
+    if (!fila.hayClientes()) {
+        return;
     }
+    if (caja1.estaLibre()) {
+        caja1.asignar(fila.quitarCliente());
+    } else if (caja2.estaLibre()) {
+        caja2.asignar(fila.quitarCliente());
+    } else if (caja3.estaLibre()) {
+        caja3.asignar(fila.quitarCliente());
+    } else if (caja4.estaLibre()) {
+        caja4.asignar(fila.quitarCliente());
+    }
+}
 
     private void procesarLlegadaCliente() {
         haLlegadoCliente = Math.random() <= PROB_LLEG_CLIENT;
